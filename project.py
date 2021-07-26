@@ -7,6 +7,8 @@
 
 import tkinter as tk
 import webbrowser
+import random
+import string
 
 # Creates the main window of the program
 root = tk.Tk()
@@ -152,4 +154,18 @@ def inspiration_clicked():
 inspiration = tk.Button(rightframe, text='Give me inspiration', command=inspiration_clicked)
 inspiration.pack()
 
+def generate_password():
+    length = 8
+    upper = string.ascii_uppercase
+    lower = string.ascii_lowercase
+    letters = string.ascii_letters
+    digits = string.digits
+    punc = string.punctuation
+    temp = ''.join(random.choice(punc) for i in range(length))
+    print(temp)
+    password = ''.join(random.sample(temp, len(temp)))
+    print(password)
+
+
+generate_password()
 root.mainloop()  # Runs the program
