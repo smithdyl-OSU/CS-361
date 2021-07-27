@@ -111,7 +111,10 @@ bottomframe.pack(side=tk.BOTTOM)
 # Creates password options as check boxes
 upper_var = tk.IntVar()
 lower_var = tk.IntVar()
+number_var = tk.IntVar()
 symbol_var = tk.IntVar()
+min_var = tk.StringVar()
+max_var = tk.StringVar()
 tk.Checkbutton(frame, text='Include Upper Case Letter (ABCDE)', variable=upper_var).grid(row=0, sticky=tk.W)
 tk.Checkbutton(frame, text='Include Lower Case Letter (abcde)', variable=lower_var).grid(row=1, sticky=tk.W)
 tk.Checkbutton(frame, text='Include Numbers (12345)', variable=symbol_var).grid(row=2, sticky=tk.W)
@@ -120,16 +123,36 @@ tk.Checkbutton(frame, text='Include Symbol (!@#$%)', variable=symbol_var).grid(r
 # Creates max and min characters needed input boxes
 tk.Label(frame, text='Minimum Characters').grid(row=4, column=0)
 tk.Label(frame, text='Maximum Characters').grid(row=5)
-min_entry = tk.Entry(frame)
-max_entry = tk.Entry(frame)
-min_entry.grid(row=4, column=1)
-max_entry.grid(row=5, column=1)
+min_entry = tk.Entry(frame, textvariable=min_var).grid(row=4, column=1)
+max_entry = tk.Entry(frame, textvariable=max_var).grid(row=5, column=1)
+
 
 generate_output = tk.Message(frame, text='')
 generate_output.grid(row=6, column=0)
 
+def generate_password(upper_var, lower_var, number_var, symbols_var, min_len, max_len):
+    if min_len == None:
+        min_len = 8
+    if max_len == None:
+        max_len = 16
+    length = random.randrange(min_len, max_len)
+    upper = string.ascii_uppercase
+    lower = string.ascii_lowercase
+    letters = string.ascii_letters
+    digits = string.digits
+    punc = string.punctuation
+    temp = ''.join(random.choice(letters) for i in range(length))
+    password = ''.join(random.sample(temp, len(temp)))
+    return password
+
 def generate_clicked():
-    new_text = "Your password is: 8CC9=+bu"
+    min_len = int(min_var.get())
+    max_len = int(max_var.get())
+    password = generate_password(upper_var, lower_var, number_var, symbol_var, min_len, max_len)
+    if password != None:
+        new_text = "Your password is: " + password
+    else:
+        new_text = "Something went wrong"
     generate_output.configure(text=new_text)
 
 # When pressed, this button calls generate_password()
@@ -154,18 +177,4 @@ def inspiration_clicked():
 inspiration = tk.Button(rightframe, text='Give me inspiration', command=inspiration_clicked)
 inspiration.pack()
 
-def generate_password():
-    length = 8
-    upper = string.ascii_uppercase
-    lower = string.ascii_lowercase
-    letters = string.ascii_letters
-    digits = string.digits
-    punc = string.punctuation
-    temp = ''.join(random.choice(punc) for i in range(length))
-    print(temp)
-    password = ''.join(random.sample(temp, len(temp)))
-    print(password)
-
-
-generate_password()
 root.mainloop()  # Runs the program
