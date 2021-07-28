@@ -117,7 +117,7 @@ min_var = tk.StringVar()
 max_var = tk.StringVar()
 tk.Checkbutton(frame, text='Include Upper Case Letter (ABCDE)', variable=upper_var).grid(row=0, sticky=tk.W)
 tk.Checkbutton(frame, text='Include Lower Case Letter (abcde)', variable=lower_var).grid(row=1, sticky=tk.W)
-tk.Checkbutton(frame, text='Include Numbers (12345)', variable=symbol_var).grid(row=2, sticky=tk.W)
+tk.Checkbutton(frame, text='Include Numbers (12345)', variable=number_var).grid(row=2, sticky=tk.W)
 tk.Checkbutton(frame, text='Include Symbol (!@#$%)', variable=symbol_var).grid(row=3, sticky=tk.W)
 
 # Creates max and min characters needed input boxes
@@ -131,23 +131,42 @@ generate_output = tk.Message(frame, text='')
 generate_output.grid(row=6, column=0)
 
 def generate_password(upper_var, lower_var, number_var, symbols_var, min_len, max_len):
-    if min_len == None:
+    if min_len == '':
         min_len = 8
-    if max_len == None:
-        max_len = 16
-    length = random.randrange(min_len, max_len)
+    if max_len == '':
+        max_len = 17
+    length = random.randrange(min_len, max_len + 1)
     upper = string.ascii_uppercase
     lower = string.ascii_lowercase
-    letters = string.ascii_letters
     digits = string.digits
     punc = string.punctuation
-    temp = ''.join(random.choice(letters) for i in range(length))
+    multi = string.ascii_letters + string.digits + string.punctuation
+    temp = upper_temp = lower_temp = number_temp = symbols_temp = ''
+    if upper_var.get() == 1:
+        upper_temp = ''.join(random.choice(upper))
+        length -= 1
+    if lower_var.get() == 1:
+        lower_temp = ''.join(random.choice(lower))
+        length -= 1
+    if number_var.get() == 1:
+        number_temp = ''.join(random.choice(digits))
+        length -= 1
+    if symbols_var.get() == 1:
+        symbols_temp = ''.join(random.choice(punc))
+        length -= 1
+    if length != 0:
+        temp = ''.join(random.choice(multi) for i in range(length))
+    temp = temp + upper_temp + lower_temp + number_temp + symbols_temp
     password = ''.join(random.sample(temp, len(temp)))
     return password
 
 def generate_clicked():
-    min_len = int(min_var.get())
-    max_len = int(max_var.get())
+    min_len = min_var.get()
+    max_len = max_var.get()
+    if min_len != '':
+        min_len = int(min_len)
+    if max_len != '':
+        max_len = int(max_len)
     password = generate_password(upper_var, lower_var, number_var, symbol_var, min_len, max_len)
     if password != None:
         new_text = "Your password is: " + password
