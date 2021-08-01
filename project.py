@@ -15,8 +15,10 @@ root = tk.Tk()
 root.title('Password Generator')
 root.geometry('500x250')
 
+
 def link(url):
     webbrowser.open_new(url)
+
 
 def advanced():
     window = tk.Toplevel(root)
@@ -35,6 +37,7 @@ def advanced():
                                                                                                          sticky=tk.W)
     close = tk.Button(frame, text='Close', command=window.withdraw)
     close.grid(row=3, column=0)
+
 
 def about():
     window = tk.Toplevel(root)
@@ -61,6 +64,7 @@ def about():
     close = tk.Button(frame, text='Close')
     close.pack()
 
+
 def learn():
     window = tk.Toplevel(root)
     window.title('Learn More')
@@ -82,6 +86,7 @@ def learn():
     link3.bind('<Button-1>', lambda e: link('https://www.connectsafely.org/passwords/'))
     close = tk.Button(frame, text='Close')
     close.pack()
+
 
 # The top menu, includes 'file' and 'about' buttons
 menu = tk.Menu(root)
@@ -126,9 +131,9 @@ tk.Label(frame, text='Maximum Characters').grid(row=5)
 min_entry = tk.Entry(frame, textvariable=min_var).grid(row=4, column=1)
 max_entry = tk.Entry(frame, textvariable=max_var).grid(row=5, column=1)
 
-
 generate_output = tk.Message(frame, text='')
 generate_output.grid(row=6, column=0)
+
 
 def generate_password(upper_var, lower_var, number_var, symbols_var, min_len, max_len):
     if min_len == '':
@@ -160,6 +165,7 @@ def generate_password(upper_var, lower_var, number_var, symbols_var, min_len, ma
     password = ''.join(random.sample(temp, len(temp)))
     return password
 
+
 def generate_clicked():
     min_len = min_var.get()
     max_len = max_var.get()
@@ -173,6 +179,7 @@ def generate_clicked():
     else:
         new_text = "Something went wrong"
     generate_output.configure(text=new_text)
+
 
 # When pressed, this button calls generate_password()
 generate = tk.Button(frame, text='Generate Password', command=generate_clicked)
@@ -188,9 +195,11 @@ filler.pack()
 inspiration_output = tk.Message(rightframe, text='')
 inspiration_output.pack()
 
+
 def inspiration_clicked():
     new_text = "Here's some inspiration: Skouterios"
     inspiration_output.configure(text=new_text)
+
 
 # When pressed, this button calls inspiration_clicked()
 inspiration = tk.Button(rightframe, text='Give me inspiration', command=inspiration_clicked)
