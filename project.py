@@ -136,6 +136,16 @@ generate_output.grid(row=6, column=0)
 
 
 def generate_password(upper_var, lower_var, number_var, symbols_var, min_len, max_len):
+    """
+
+    :param upper_var:
+    :param lower_var:
+    :param number_var:
+    :param symbols_var:
+    :param min_len:
+    :param max_len:
+    :return:
+    """
     if min_len == '':
         min_len = 8
     if max_len == '':
@@ -167,6 +177,10 @@ def generate_password(upper_var, lower_var, number_var, symbols_var, min_len, ma
 
 
 def generate_clicked():
+    """
+
+    :return:
+    """
     min_len = min_var.get()
     max_len = max_var.get()
     if min_len != '':
@@ -176,8 +190,8 @@ def generate_clicked():
     password = generate_password(upper_var, lower_var, number_var, symbol_var, min_len, max_len)
     if password != None:
         new_text = "Your password is: " + password
-    else:
-        new_text = "Something went wrong"
+    #else:
+    #    new_text = "Something went wrong"
     generate_output.configure(text=new_text)
 
 
@@ -186,8 +200,8 @@ generate = tk.Button(frame, text='Generate Password', command=generate_clicked)
 generate.grid(row=7, column=0)
 
 # Displays explanation of inspiration button
-inspiration_text = tk.Message(rightframe, text='Want inspiration to make your own password? Click the \'give me inspiration\' '
-                                    'button below, and get some ideas!')
+inspiration_text = tk.Message(rightframe, text='Want inspiration to make your own password? Click the \'give me '
+                                               'inspiration\' button below, and get some ideas!')
 inspiration_text.pack()
 filler = tk.Message(rightframe, text='')
 filler.pack()
@@ -205,4 +219,4 @@ def inspiration_clicked():
 inspiration = tk.Button(rightframe, text='Give me inspiration', command=inspiration_clicked)
 inspiration.pack()
 
-root.mainloop()  # Runs the program
+root.mainloop()
