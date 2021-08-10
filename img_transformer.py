@@ -3,7 +3,6 @@
 # Description: This software is a microservice image transformer with the capabilities of resizing images and adding
 #               transparent backgrounds.
 
-import requests
 from PIL import Image
 
 def image_resize(param):
@@ -30,3 +29,24 @@ def image_resize(param):
         wsize = int((float(img.size[0]) * float(hpercent)))
         img = img.resize((wsize, base), Image.ANTIALIAS)
     img.save('resized_image.jpg')
+
+def image_trans(param):
+    """
+    Adds a transparent background to Image. The image should start with a white background.
+    :param image: The file name of the image to be transformed.
+    :return: The transformed image, saved as 'transparent_image.png'.
+    """
+    img = Image.open(param["image"])
+    rgba = img.convert('RGBA')
+    datas = rgba.getdata()
+    newData = []  # Temporary storage space for new rgba data
+    for item in datas:
+        #Iterate through the data of the image
+        if item[0] == 255 and item[1] == 255 and item[2] == 255:
+            # White pixel found, replace with transparent pixel
+            newData.append((255, 255, 255, 0))
+        else:
+            # Non-white pixel, append to newData
+            newData.append(item)
+    rgba.putdata(newData)  # Replace old rgba data with newData
+    rgba.save('transparent_image.png', 'PNG')
