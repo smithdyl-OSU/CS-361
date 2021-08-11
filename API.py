@@ -1,4 +1,4 @@
-import img_transformer.py
+import img_transformer
 from flask import request
 from flask import Flask
 from flask import send_file
