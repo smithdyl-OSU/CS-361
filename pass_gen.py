@@ -31,10 +31,10 @@ def advanced():
     text.grid(row=0)
     similar_var = tk.IntVar()
     ambiguous_var = tk.IntVar()
-    tk.Checkbutton(frame, text='Exclude Similar Characters (e.g. o, O, 0, l, I)', variable=similar_var).grid(row=1,
-                                                                                                           sticky=tk.W)
-    tk.Checkbutton(frame, text='Exclude Ambiguous Characters (e.g. "`\'{}()[])', variable=ambiguous_var).grid(row=2,
-                                                                                                         sticky=tk.W)
+    tk.Checkbutton(frame, text='Exclude Similar Characters (e.g. o, O, 0, l, I)',
+                   variable=similar_var).grid(row=1, sticky=tk.W)
+    tk.Checkbutton(frame, text='Exclude Ambiguous Characters (e.g. "`\'{}()[])',
+                   variable=ambiguous_var).grid(row=2, sticky=tk.W)
     close = tk.Button(frame, text='Close', command=window.withdraw)
     close.grid(row=3, column=0)
 
@@ -74,14 +74,16 @@ def learn():
     text = tk.Message(frame, text='To learn more about password security, check out the following resources:',
                       width=300, justify='left')
     text.pack()
-    link1 = tk.Message(frame, text='https://www.security.org/', fg='blue', cursor='hand2', width=300, justify='left')
+    link1 = tk.Message(frame, text='https://www.security.org/',
+                       fg='blue', cursor='hand2', width=300, justify='left')
     link1.pack()
     link1.bind('<Button-1>', lambda e: link('https://www.security.org/how-secure-is-my-password/'))
-    link2 = tk.Message(frame, text='https://www.techsafety.org/', fg='blue', cursor='hand2', width=300, justify='left')
+    link2 = tk.Message(frame, text='https://www.techsafety.org/',
+                       fg='blue', cursor='hand2', width=300, justify='left')
     link2.pack()
     link2.bind('<Button-1>', lambda e: link('https://www.techsafety.org/passwordincreasesecurity'))
-    link3 = tk.Message(frame, text='https://www.connectsafely.org/', fg='blue', cursor='hand2', width=300,
-                       justify='left')
+    link3 = tk.Message(frame, text='https://www.connectsafely.org/',
+                       fg='blue', cursor='hand2', width=300, justify='left')
     link3.pack()
     link3.bind('<Button-1>', lambda e: link('https://www.connectsafely.org/passwords/'))
     close = tk.Button(frame, text='Close')
@@ -114,88 +116,94 @@ bottomframe = tk.Frame(root)
 bottomframe.pack(side=tk.BOTTOM)
 
 # Creates password options as check boxes
-upper_var = tk.IntVar()
-lower_var = tk.IntVar()
-number_var = tk.IntVar()
-symbol_var = tk.IntVar()
-min_var = tk.StringVar()
-max_var = tk.StringVar()
-tk.Checkbutton(frame, text='Include Upper Case Letter (ABCDE)', variable=upper_var).grid(row=0, sticky=tk.W)
-tk.Checkbutton(frame, text='Include Lower Case Letter (abcde)', variable=lower_var).grid(row=1, sticky=tk.W)
-tk.Checkbutton(frame, text='Include Numbers (12345)', variable=number_var).grid(row=2, sticky=tk.W)
-tk.Checkbutton(frame, text='Include Symbol (!@#$%)', variable=symbol_var).grid(row=3, sticky=tk.W)
+require_upper_case = tk.IntVar()
+require_lower_case = tk.IntVar()
+require_number = tk.IntVar()
+require_symbol = tk.IntVar()
+min_chars = tk.StringVar()
+max_chars = tk.StringVar()
+tk.Checkbutton(frame, text='Include Upper Case Letter (ABCDE)', variable=require_upper_case).grid(row=0, sticky=tk.W)
+tk.Checkbutton(frame, text='Include Lower Case Letter (abcde)', variable=require_lower_case).grid(row=1, sticky=tk.W)
+tk.Checkbutton(frame, text='Include Numbers (12345)', variable=require_number).grid(row=2, sticky=tk.W)
+tk.Checkbutton(frame, text='Include Symbol (!@#$%)', variable=require_symbol).grid(row=3, sticky=tk.W)
 
 # Creates max and min characters needed input boxes
 tk.Label(frame, text='Minimum Characters').grid(row=4, column=0)
 tk.Label(frame, text='Maximum Characters').grid(row=5)
-min_entry = tk.Entry(frame, textvariable=min_var).grid(row=4, column=1)
-max_entry = tk.Entry(frame, textvariable=max_var).grid(row=5, column=1)
+min_entry = tk.Entry(frame, textvariable=min_chars).grid(row=4, column=1)
+max_entry = tk.Entry(frame, textvariable=max_chars).grid(row=5, column=1)
 
 generate_output = tk.Message(frame, text='')
 generate_output.grid(row=6, column=0)
 
 
-def generate_password(upper_var, lower_var, number_var, symbols_var, min_len, max_len):
+def generate_password(length):
     """
-
-    :param upper_var:
-    :param lower_var:
-    :param number_var:
-    :param symbols_var:
-    :param min_len:
-    :param max_len:
+    Randomly generates a password for the user.
+    :param length: integer, the number of random characters to generate for the password
     :return:
     """
-    if min_len == '':
-        min_len = 8
-    if max_len == '':
-        max_len = 17
-    length = random.randrange(min_len, max_len + 1)
-    upper = string.ascii_uppercase
-    lower = string.ascii_lowercase
-    digits = string.digits
-    punc = string.punctuation
     multi = string.ascii_letters + string.digits + string.punctuation
-    temp = upper_temp = lower_temp = number_temp = symbols_temp = ''
-    if upper_var.get() == 1:
-        upper_temp = ''.join(random.choice(upper))
-        length -= 1
-    if lower_var.get() == 1:
-        lower_temp = ''.join(random.choice(lower))
-        length -= 1
-    if number_var.get() == 1:
-        number_temp = ''.join(random.choice(digits))
-        length -= 1
-    if symbols_var.get() == 1:
-        symbols_temp = ''.join(random.choice(punc))
+    temp = ''
+    required = generate_required()
+    for char in required:
         length -= 1
     if length != 0:
         temp = ''.join(random.choice(multi) for i in range(length))
-    temp = temp + upper_temp + lower_temp + number_temp + symbols_temp
+    temp = temp + required
     password = ''.join(random.sample(temp, len(temp)))
     return password
 
 
+def generate_required():
+    """
+    Checks for user specified requirements for password.
+    :return: string, containing one randomized character from each category requested by user
+    """
+    upper_temp = lower_temp = number_temp = symbol_temp = ''
+    if require_upper_case.get() == 1:
+        upper_temp = ''.join(random.choice(string.ascii_uppercase))
+    if require_lower_case.get() == 1:
+        lower_temp = ''.join(random.choice(string.ascii_lowercase))
+    if require_number.get() == 1:
+        number_temp = ''.join(random.choice(string.digits))
+    if require_symbol.get() == 1:
+        symbol_temp = ''.join(random.choice(string.punctuation))
+    return upper_temp + lower_temp + number_temp + symbol_temp
+
+
 def generate_clicked():
     """
-
-    :return:
+    Displays randomly generated password on GUI.
     """
-    min_len = min_var.get()
-    max_len = max_var.get()
-    if min_len != '':
-        min_len = int(min_len)
-    if max_len != '':
-        max_len = int(max_len)
-    password = generate_password(upper_var, lower_var, number_var, symbol_var, min_len, max_len)
-    if password != None:
-        new_text = "Your password is: " + password
-    #else:
-    #    new_text = "Something went wrong"
+    length = calc_length(min_chars.get(), max_chars.get())
+    password = generate_password(length)
+    new_text = "Your password is: " + password
     generate_output.configure(text=new_text)
 
 
-# When pressed, this button calls generate_password()
+def calc_length(min_len, max_len):
+    """
+    :param min_len: string, user input minimum allowed length for password
+    :param max_len: string, user input maximum allowed length for password
+    :return: integer, the random length between min_len and max_len (8-16 by default if no user input)
+    """
+    if min_len != '':
+        min_len = int(min_len)
+    else:
+        min_len = 8
+    if max_len != '':
+        max_len = int(max_len)
+    else:
+        max_len = 17
+    return random.randrange(min_len, max_len + 1)
+
+
+def inspiration_clicked():
+    new_text = "Here's some inspiration: Skouterios"
+    inspiration_output.configure(text=new_text)
+
+
 generate = tk.Button(frame, text='Generate Password', command=generate_clicked)
 generate.grid(row=7, column=0)
 
@@ -209,13 +217,6 @@ filler.pack()
 inspiration_output = tk.Message(rightframe, text='')
 inspiration_output.pack()
 
-
-def inspiration_clicked():
-    new_text = "Here's some inspiration: Skouterios"
-    inspiration_output.configure(text=new_text)
-
-
-# When pressed, this button calls inspiration_clicked()
 inspiration = tk.Button(rightframe, text='Give me inspiration', command=inspiration_clicked)
 inspiration.pack()
 
