@@ -16,6 +16,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def resize():
     print(request.files)
     file = request.files['image']
+    file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
     print(file)
-    resized_img = image_resize(file)
+    resized_img = image_resize(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
     return send_file(resized_img, mimetype='resized_image/jpg')
