@@ -11,5 +11,6 @@ app = Flask(__name__)
 def resize():
     print(request.files)
     file = request.files['image']
+    print(file)
     resized_img = image_resize(file)
     return send_file(resized_img, mimetype='resized_image/jpg')
