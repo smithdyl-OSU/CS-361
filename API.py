@@ -21,4 +21,4 @@ def resize():
     print(file)
     resized_img = image_resize(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
     print(resized_img)
-    return send_file(resized_img, mimetype='resized_image/jpg')
+    return send_file(resized_img, mimetype='image/png')
