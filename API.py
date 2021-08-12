@@ -3,6 +3,7 @@ from flask import request
 from flask import Flask
 from flask import send_file
 from PIL import Image
+import os
 
 app = Flask(__name__)
 
