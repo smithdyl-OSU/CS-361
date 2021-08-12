@@ -19,4 +19,4 @@ def image_resize(image):
     draw.rectangle((200, 0, 500, 100), fill=(255, 255, 255, 0), outline=(255, 255, 255, 0))
     draw.rectangle((200, 200, 500, 300), fill=(255, 255, 255, 0), outline=(255, 255, 255, 0))
     resized_img.save('new_image.png')
-    return img
+    return resized_img
