@@ -60,6 +60,9 @@ def about():
 
 
 def display_QA(frame):
+    """
+    Displays the Q and A text to the About menu page.
+    """
     text = tk.Message(frame, width=450, justify='left', text='Q - What is this program?\n'
                                   'A - This program is meant to help users create secure passwords that they can use '
                                   'for a variety of sites, entering the parameters that their site requires.\n\n'
@@ -233,15 +236,31 @@ def calc_length(min_len, max_len):
 
 
 def inspiration_clicked():
+    """
+    Uses API call to webscraper to provide inspiration to user.
+    """
+    inspiration = api_call()
+    new_text = inspiration
+    inspiration_output.configure(text=new_text)
+    old_inspiration = inspiration_output_var.get()
+    past_inspiration_text.set(old_inspiration + '\n')
+    past_inspiration_scroll.insert(1.0, past_inspiration_text.get())
+    inspiration_output_var.set(new_text)
+
+
+def api_call():
+    """
+    Makes call to webscraper using random Wikipedia article, receiving the article's title.
+    :return: string
+    """
     article = requests.get('https://en.wikipedia.org/wiki/Special:Random').text
     soup = BeautifulSoup(article, 'html.parser')
     h1 = soup.find('h1', id='firstHeading')
     h1 = h1.string
     data = h1.replace(' ', '_')
     response = requests.get('http://flip2.engr.oregonstate.edu:8797/?u=' + data)
-    inspiration = response.json()['title'][0]
-    new_text = "Here's some inspiration: " + inspiration
-    inspiration_output.configure(text=new_text)
+    return response.json()['title'][0]
+
 
 
 def reset():
@@ -256,6 +275,8 @@ def reset():
     max_chars.set('')
     past_password_scroll.delete('0.0', END)
     output_var.set('')
+    inspiration_output_var.set('')
+    past_inspiration_scroll.delete('0.0', END)
 
 
 def error(type):
@@ -272,7 +293,7 @@ def error(type):
 
 root = tk.Tk()
 root.title('Password Generator')
-root.geometry('600x375')
+root.geometry('550x325')
 
 # The top menu
 menu = tk.Menu(root)
@@ -290,9 +311,17 @@ helpmenu.add_command(label='Learn more', command=learn)
 
 # Frames of root window
 frame = tk.Frame(root)
-frame.pack(side=tk.LEFT)
-rightframe = tk.Frame(root)
+frame.pack(side=tk.TOP)
+leftframe = tk.Frame(frame)
+leftframe.pack(side=tk.LEFT)
+rightframe = tk.Frame(frame)
 rightframe.pack(side=tk.RIGHT)
+bottomframe = tk.Frame(root)
+bottomframe.pack(side=tk.BOTTOM)
+bottomleftframe = tk.Frame(bottomframe)
+bottomleftframe.pack(side=tk.LEFT)
+bottomrightframe = tk.Frame(bottomframe)
+bottomrightframe.pack(side=tk.RIGHT)
 
 # Creates password options as check boxes
 require_upper_case = tk.IntVar()
@@ -304,41 +333,47 @@ max_chars = tk.StringVar()
 similar_var = tk.BooleanVar()
 ambiguous_var = tk.BooleanVar()
 output_var = tk.StringVar()
-tk.Checkbutton(frame, text='Include Upper Case Letter (ABCDE)', variable=require_upper_case).grid(row=0, sticky=tk.W)
-tk.Checkbutton(frame, text='Include Lower Case Letter (abcde)', variable=require_lower_case).grid(row=1, sticky=tk.W)
-tk.Checkbutton(frame, text='Include Numbers (12345)', variable=require_number).grid(row=2, sticky=tk.W)
-tk.Checkbutton(frame, text='Include Symbol (!@#$%)', variable=require_symbol).grid(row=3, sticky=tk.W)
+tk.Checkbutton(leftframe, text='Include Upper Case Letter (ABCDE)', variable=require_upper_case).grid(row=0, sticky=tk.W)
+tk.Checkbutton(leftframe, text='Include Lower Case Letter (abcde)', variable=require_lower_case).grid(row=1, sticky=tk.W)
+tk.Checkbutton(leftframe, text='Include Numbers (12345)', variable=require_number).grid(row=2, sticky=tk.W)
+tk.Checkbutton(leftframe, text='Include Symbol (!@#$%)', variable=require_symbol).grid(row=3, sticky=tk.W)
 
 # Creates max and min characters needed input boxes
-tk.Label(frame, text='Minimum Characters').grid(row=4, column=0)
-tk.Label(frame, text='Maximum Characters').grid(row=5)
-min_entry = tk.Entry(frame, textvariable=min_chars).grid(row=4, column=1)
-max_entry = tk.Entry(frame, textvariable=max_chars).grid(row=5, column=1)
+tk.Label(leftframe, text='Minimum Characters').grid(row=4, column=0)
+tk.Label(leftframe, text='Maximum Characters').grid(row=5)
+min_entry = tk.Entry(leftframe, textvariable=min_chars).grid(row=4, column=1)
+max_entry = tk.Entry(leftframe, textvariable=max_chars).grid(row=5, column=1)
 
 # Generate password button
-generate = tk.Button(frame, text='Generate Password', command=generate_clicked)
+generate = tk.Button(leftframe, text='Generate Password', command=generate_clicked)
 generate.grid(row=6, column=0)
-generate_text = tk.Message(frame, text='Your password is: ', width=200, justify='left')
+generate_text = tk.Message(leftframe, text='Your password is: ', width=200, justify='left')
 generate_text.grid(row=7, column=0)
-generate_output = tk.Message(frame, textvariable=output_var, width=500, justify='left')
-generate_output.grid(row=7, column=1)
+generate_output = tk.Message(leftframe, textvariable=output_var, width=500, justify='left')
+generate_output.grid(row=8, column=0)
 
 # Past password tracker
 past_password_text = tk.StringVar()
-past_password_scroll = scrolledtext.ScrolledText(frame, undo=True, width=40, height=6)
+past_password_scroll = scrolledtext.ScrolledText(bottomleftframe, undo=True, width=40, height=6)
 past_password_scroll.grid(row=8, column=0, columnspan=2)
 past_password_scroll.insert(1.0, past_password_text.get())
 
 # Inspiration button
-inspiration_text = tk.Message(rightframe, text='Want inspiration to make your own password? Click the \'give me '
-                                               'inspiration\' button below, and get some ideas!', width=200)
+inspiration_text = tk.Message(rightframe, text='\n\n\nWant inspiration to make your own password? Click the \'give me '
+                                               'inspiration\' button below, and get some ideas!\n\n', width=200)
 inspiration = tk.Button(rightframe, text='Give me inspiration', command=inspiration_clicked)
 inspiration_text.pack()
 inspiration.pack()
-filler = tk.Message(rightframe, text='')
-filler.pack()
-
-inspiration_output = tk.Message(rightframe, text='', width=200)
+inspiration_output_var = tk.StringVar()
+inspiration_output_text = tk.Message(rightframe, text='Your inspiration is: ', width=200, justify='left')
+inspiration_output_text.pack()
+inspiration_output = tk.Message(rightframe, textvariable=inspiration_output_var, width=200, justify='left')
 inspiration_output.pack()
+
+# Past inspiration tracker
+past_inspiration_text = tk.StringVar()
+past_inspiration_scroll = scrolledtext.ScrolledText(bottomrightframe, undo=True, width=40, height=6)
+past_inspiration_scroll.pack()
+past_inspiration_scroll.insert(1.0, past_inspiration_text.get())
 
 root.mainloop()
