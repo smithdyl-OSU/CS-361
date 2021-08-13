@@ -16,7 +16,7 @@ def image_resize(image):
     resized_img = img.resize(newsize)
     draw = ImageDraw.Draw(resized_img)
     # Apply transparent cutouts to top and bottom of image
-    draw.rectangle((200, 0, 500, 100), fill=(255, 255, 255, 0), outline=(255, 255, 255, 0))
-    draw.rectangle((200, 200, 500, 300), fill=(255, 255, 255, 0), outline=(255, 255, 255, 0))
+    draw.rectangle((200, 0, 400, 100), fill=(255, 255, 255, 0), outline=(255, 255, 255, 0))
+    draw.rectangle((200, 200, 400, 300), fill=(255, 255, 255, 0), outline=(255, 255, 255, 0))
     resized_img.save('new_image.png')
     return resized_img
